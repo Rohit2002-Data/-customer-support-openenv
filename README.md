@@ -1,12 +1,11 @@
+Customer Support OpenEnv
+AI customer support environment with reward-driven evaluation.
 
-# Final Customer Support OpenEnv
-
-## Features
-- Multi-step simulation
-- Policy enforcement
-- Reward shaping
-- Loop penalties
-
-## Run
-pip install -r requirements.txt
-uvicorn app:app --reload
+Features
+Multi-step interaction
+Policy constraints
+Reward shaping
+Loop penalty
+Endpoints
+/reset → start new task
+/step → take action
