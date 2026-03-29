@@ -1,30 +1,34 @@
-import requests
+from env.environment import CustomerSupportEnv
+from env.models import Action
 
-BASE_URL = "http://localhost:7860"
+env = CustomerSupportEnv()
 
-def run():
-    # Reset environment
-    r = requests.post(f"{BASE_URL}/reset")
-    obs = r.json()["observation"]
-
-    total_reward = 0
-
-    for _ in range(3):
-        action = {
-            "action_type": "respond",
-            "category": "account",
-            "response_text": "Please reset your password using the link sent to your email."
+def reset():
+    obs = env.reset()
+    return {
+        "observation": {
+            "customer_query": obs.customer_query,
+            "conversation_history": obs.conversation_history,
+            "ticket_status": obs.ticket_status,
+            "sentiment": obs.sentiment,
+            "progress": float(obs.progress)
         }
+    }
 
-        r = requests.post(f"{BASE_URL}/step", json=action)
-        data = r.json()
+def step(action: dict):
+    action_obj = Action(**action)
 
-        total_reward += data["reward"]
+    obs, reward, done, info = env.step(action_obj)
 
-        if data["done"]:
-            break
-
-    print("Final Score:", total_reward)
-
-if __name__ == "__main__":
-    run()
+    return {
+        "observation": {
+            "customer_query": obs.customer_query,
+            "conversation_history": obs.conversation_history,
+            "ticket_status": obs.ticket_status,
+            "sentiment": obs.sentiment,
+            "progress": float(obs.progress)
+        },
+        "reward": float(reward),
+        "done": bool(done),
+        "info": info
+    }
